@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Giriş — Fabrika Depo Yönetim</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="giris-body">
+  <div class="giris-kutu">
+    <div class="giris-logo">🏭 Fabrika Depo Yönetim</div>
+    <h1>Çalışan Girişi</h1>
+
+    {% with mesajlar = get_flashed_messages(with_categories=true) %}
+      {% for kategori, mesaj in mesajlar %}
+        <div class="mesaj {{ kategori }}">{{ mesaj }}</div>
+      {% endfor %}
+    {% endwith %}
+
+    <form method="post">
+      <label>Kullanıcı Adı
+        <input type="text" name="kullanici_adi" required autofocus>
+      </label>
+      <label>Şifre
+        <input type="password" name="sifre" required>
+      </label>
+      <button type="submit" class="btn-birincil">Giriş Yap</button>
+    </form>
+    <p class="ipucu">Varsayılan yönetici: <b>admin</b> / <b>admin123</b> (seed.py ile oluşur)</p>
+  </div>
+</body>
+</html>

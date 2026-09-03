@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block baslik %}Fabrika Depo Yönetim{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header class="ust-bar">
+    <div class="logo">🏭 Fabrika Depo Yönetim</div>
+    {% if session.calisan_id %}
+    <nav>
+      <a href="{{ url_for('ana_sayfa') }}">Ana Sayfa</a>
+      <a href="{{ url_for('mal_giris') }}">Mal Giriş</a>
+      <a href="{{ url_for('mal_cikis') }}">Mal Çıkış</a>
+      <a href="{{ url_for('stok') }}">Stok</a>
+      <a href="{{ url_for('bolumler') }}">Depo Bölümleri</a>
+      <a href="{{ url_for('urunler') }}">Malzemeler</a>
+      <a href="{{ url_for('birimler') }}">Birimler</a>
+      <a href="{{ url_for('rapor') }}">Rapor</a>
+      {% if session.rol == 'admin' %}
+      <a href="{{ url_for('calisanlar') }}">Çalışanlar</a>
+      {% endif %}
+    </nav>
+    <div class="kullanici">
+      <span>👤 {{ session.ad_soyad }}{% if session.rol == 'admin' %} (admin){% endif %}</span>
+      <a href="{{ url_for('cikis') }}" class="cikis-btn">Çıkış</a>
+    </div>
+    {% endif %}
+  </header>
+
+  <main class="icerik">
+    {% with mesajlar = get_flashed_messages(with_categories=true) %}
+      {% if mesajlar %}
+        <div class="mesajlar">
+          {% for kategori, mesaj in mesajlar %}
+            <div class="mesaj {{ kategori }}">{{ mesaj }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block icerik %}{% endblock %}
+  </main>
+
+  <footer class="alt-bar">
+    <span>Staj Projesi — Fabrika Depo Yönetim Yazılımı</span>
+  </footer>
+  {% block script %}{% endblock %}
+</body>
+</html>

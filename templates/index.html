@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block baslik %}Ana Sayfa — Fabrika Depo Yönetim{% endblock %}
+
+{% block icerik %}
+<h1>Ana Sayfa</h1>
+<p class="aciklama">
+  Fabrika deposunun anlık durumu. Malzeme girişleri "kim, nereye, ne zaman";
+  çıkışlar ise "kim, neden, hangi birim için, nereden, ne zaman" bilgisiyle kayıt altına alınır.
+</p>
+
+<div class="ozet-kartlar">
+  <div class="ozet-kart"><div class="sayi">{{ ozet.urun }}</div><div class="etiket">Malzeme çeşidi</div></div>
+  <div class="ozet-kart"><div class="sayi">{{ ozet.bolum }}</div><div class="etiket">Depo bölümü</div></div>
+  <div class="ozet-kart"><div class="sayi">{{ ozet.raf }}</div><div class="etiket">Raf / göz</div></div>
+  <div class="ozet-kart"><div class="sayi">{{ ozet.birim }}</div><div class="etiket">Fabrika birimi</div></div>
+  <div class="ozet-kart giris"><div class="sayi">{{ ozet.bugun_giris }}</div><div class="etiket">Bugünkü giriş</div></div>
+  <div class="ozet-kart cikis"><div class="sayi">{{ ozet.bugun_cikis }}</div><div class="etiket">Bugünkü çıkış</div></div>
+</div>
+
+<div class="hizli-linkler">
+  <a href="{{ url_for('mal_giris') }}" class="hizli-link giris">➕ Mal Girişi Yap</a>
+  <a href="{{ url_for('mal_cikis') }}" class="hizli-link cikis">➖ Mal Çıkışı Yap</a>
+  <a href="{{ url_for('stok') }}" class="hizli-link">📊 Stok Durumu</a>
+  <a href="{{ url_for('rapor') }}" class="hizli-link">📄 Rapor</a>
+</div>
+
+<div class="panel" style="margin-top:22px">
+  <h2>Depo bölümleri <small>bölümde stoğu olan malzeme çeşidi</small></h2>
+  <div class="bolum-kartlar">
+    {% for b in bolum_ozet %}
+      <a class="bolum-kart tur-{{ b.tur }}" href="{{ url_for('stok', bolum_id=b.id) }}">
+        <span class="bolum-kod">{{ b.kod }}</span>
+        <span class="bolum-ad">{{ b.ad }}</span>
+        <span class="bolum-cesit">{{ b.cesit }} çeşit</span>
+      </a>
+    {% else %}
+      <p class="bos">Henüz depo bölümü tanımlanmamış.</p>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="panel">
+  <h2>⚠️ Kritik stok uyarısı <small>ürünün kendi eşiğinin altına düşenler</small></h2>
+  {% if dusuk_stok %}
+  <table class="tablo">
+    <tr><th>Stok kodu</th><th>Malzeme</th><th>Kalan</th><th>Kritik eşik</th><th>Durum</th></tr>
+    {% for u in dusuk_stok %}
+    <tr class="uyari-satir">
+      <td><code>{{ u.stok_kodu }}</code></td>
+      <td>{{ u.urun_ad }}</td>
+      <td>{{ '%g'|format(u.stok) }} {{ u.birim }}</td>
+      <td>{{ '%g'|format(u.esik) }} {{ u.birim }}</td>
+      <td><span class="rozet dusuk">Sipariş verilmeli</span></td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <p class="bos">Kritik seviyenin altında malzeme yok. 👍</p>
+  {% endif %}
+</div>
+
+<div class="panel">
+  <h2>Son hareketler</h2>
+  {% if son_hareketler %}
+  <table class="tablo">
+    <tr><th>Tarih</th><th>Tip</th><th>Malzeme</th><th>Miktar</th><th>Adres</th><th>Birim / Kaynak</th><th>Kaydeden</th></tr>
+    {% for h in son_hareketler %}
+    <tr>
+      <td class="nowrap">{{ h.tarih[:16] }}</td>
+      <td><span class="rozet {{ 'giris-rozet' if h.tip == 'GİRİŞ' else 'cikis-rozet' }}">{{ h.tip }}</span></td>
+      <td>{{ h.urun_ad }}</td>
+      <td class="{{ 'giris-renk' if h.tip == 'GİRİŞ' else 'cikis-renk' }}">
+        {{ '+' if h.tip == 'GİRİŞ' else '−' }}{{ '%g'|format(h.miktar) }} {{ h.birim }}
+      </td>
+      <td class="adres">{{ h.raf_kod }}</td>
+      <td>{{ h.birim_ad or h.kaynak_hedef or '—' }}</td>
+      <td>{{ h.calisan_ad }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <p class="bos">Henüz hareket kaydı yok.</p>
+  {% endif %}
+</div>
+{% endblock %}

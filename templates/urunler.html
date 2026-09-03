@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block baslik %}Malzemeler{% endblock %}
+
+{% block icerik %}
+<h1>Malzeme Tanımları</h1>
+<p class="aciklama">
+  Depoda takip edilen fabrika malzemeleri. Her malzemenin bir stok kodu, ölçü
+  birimi ve kritik stok eşiği vardır; stok bu eşiğin altına düştüğünde ana
+  sayfada uyarı çıkar.
+</p>
+
+<div class="panel">
+  <h2>Yeni malzeme ekle</h2>
+  <form method="post" class="form-grid">
+    <label>Stok kodu *
+      <input type="text" name="stok_kodu" required placeholder="HM-SAC-002">
+    </label>
+    <label>Malzeme adı *
+      <input type="text" name="ad" required placeholder="Sac Levha DKP 2mm">
+    </label>
+    <label>Kategori
+      <input type="text" name="kategori" placeholder="Hammadde" list="kategoriler">
+      <datalist id="kategoriler">
+        {% for u in urunler|map(attribute='kategori')|unique %}
+          {% if u %}<option value="{{ u }}">{% endif %}
+        {% endfor %}
+      </datalist>
+    </label>
+    <label>Ölçü birimi
+      <select name="birim">
+        {% for b in birimler %}<option value="{{ b }}">{{ b }}</option>{% endfor %}
+      </select>
+    </label>
+    <label>Kritik stok eşiği
+      <input type="number" name="kritik_stok" step="any" min="0" value="0"
+             placeholder="0 = genel varsayılan kullanılır">
+    </label>
+    <label>Açıklama
+      <input type="text" name="aciklama">
+    </label>
+    <div class="form-buton">
+      <button type="submit" class="btn-birincil">Malzeme Ekle</button>
+    </div>
+  </form>
+</div>
+
+<div class="panel">
+  <h2>Tanımlı malzemeler <small>{{ urunler|length }} çeşit</small></h2>
+  <table class="tablo">
+    <tr>
+      <th>Stok kodu</th><th>Malzeme</th><th>Kategori</th>
+      <th>Birim</th><th>Kritik stok</th><th>Açıklama</th>
+    </tr>
+    {% for u in urunler %}
+    <tr>
+      <td><code>{{ u.stok_kodu }}</code></td>
+      <td>{{ u.ad }}</td>
+      <td>{{ u.kategori or '—' }}</td>
+      <td>{{ u.birim }}</td>
+      <td>{{ '%g'|format(u.kritik_stok) if u.kritik_stok else '—' }}</td>
+      <td>{{ u.aciklama or '—' }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="6" class="bos">Henüz malzeme eklenmemiş.</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

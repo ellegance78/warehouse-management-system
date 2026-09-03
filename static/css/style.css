@@ -1,0 +1,253 @@
+/* Depo Yönetim Yazılımı — stiller.
+   Sade, kurumsal bir görünüm; lacivert + gri paleti. */
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+  background: #f4f6f8;
+  color: #1f2937;
+  line-height: 1.5;
+}
+
+/* ---------- Üst menü ---------- */
+.ust-bar {
+  display: flex; align-items: center; gap: 20px;
+  background: #1e3a5f; color: #fff; padding: 12px 24px; flex-wrap: wrap;
+}
+.ust-bar .logo { font-size: 18px; font-weight: 600; }
+.ust-bar nav { display: flex; gap: 4px; flex-wrap: wrap; flex: 1; }
+.ust-bar nav a {
+  color: #cbd5e1; text-decoration: none; padding: 6px 10px;
+  border-radius: 6px; font-size: 14px;
+}
+.ust-bar nav a:hover { background: rgba(255,255,255,.12); color: #fff; }
+.ust-bar .kullanici { display: flex; align-items: center; gap: 12px; font-size: 14px; }
+.cikis-btn {
+  color: #fff; text-decoration: none; background: #b91c1c;
+  padding: 5px 12px; border-radius: 6px; font-size: 13px;
+}
+.cikis-btn:hover { background: #991b1b; }
+
+/* ---------- İçerik ---------- */
+.icerik { max-width: 1040px; margin: 0 auto; padding: 28px 24px; }
+h1 { font-size: 24px; color: #1e3a5f; margin-bottom: 16px; }
+h2 { font-size: 18px; margin-bottom: 12px; color: #334155; }
+h2 small { font-weight: 400; color: #9ca3af; font-size: 13px; }
+.aciklama { color: #64748b; margin-bottom: 16px; max-width: 720px; }
+
+/* ---------- Flash mesajları ---------- */
+.mesajlar { margin-bottom: 18px; }
+.mesaj { padding: 10px 14px; border-radius: 8px; margin-bottom: 8px; font-size: 14px; }
+.mesaj.basari { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+.mesaj.hata   { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+.mesaj.uyari  { background: #fef9c3; color: #854d0e; border: 1px solid #fde047; }
+
+/* ---------- Panel ---------- */
+.panel {
+  background: #fff; border: 1px solid #e5e7eb; border-radius: 10px;
+  padding: 20px; margin-bottom: 22px;
+}
+
+/* ---------- Özet kartlar (dashboard) ---------- */
+.ozet-kartlar {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 14px; margin-bottom: 24px;
+}
+.ozet-kart {
+  background: #fff; border: 1px solid #e5e7eb; border-radius: 10px;
+  padding: 18px; text-align: center;
+}
+.ozet-kart .sayi { font-size: 30px; font-weight: 700; color: #1e3a5f; }
+.ozet-kart .etiket { font-size: 13px; color: #6b7280; margin-top: 4px; }
+.ozet-kart.giris .sayi { color: #16a34a; }
+.ozet-kart.cikis .sayi { color: #dc2626; }
+
+/* ---------- Hızlı linkler ---------- */
+.hizli-linkler { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+.hizli-link {
+  background: #fff; border: 1px solid #e5e7eb; border-radius: 10px;
+  padding: 14px 20px; text-decoration: none; color: #1e3a5f; font-weight: 600;
+}
+.hizli-link:hover { box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+.hizli-link.giris { border-left: 4px solid #16a34a; }
+.hizli-link.cikis { border-left: 4px solid #dc2626; }
+
+/* ---------- Formlar ---------- */
+label { display: block; margin-bottom: 12px; font-size: 14px; color: #374151; }
+input, select {
+  display: block; width: 100%; margin-top: 4px; padding: 9px 11px;
+  border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; background: #fff;
+}
+input:focus, select:focus { outline: none; border-color: #1e3a5f; }
+
+.form-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 6px 18px;
+}
+.form-grid .form-buton { grid-column: 1 / -1; display: flex; gap: 12px; margin-top: 8px; }
+
+/* Tek satır form (bölüm/ürün ekleme) */
+.satir-form { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; }
+.satir-form input, .satir-form select { width: auto; flex: 1; min-width: 140px; margin-top: 0; }
+
+.filtre-form { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; }
+.filtre-form select, .filtre-form input { width: auto; margin-top: 0; }
+.filtre-form label { margin: 0; }
+
+/* ---------- Butonlar ---------- */
+button, .btn-birincil, .btn-ikincil {
+  cursor: pointer; border: none; border-radius: 8px; padding: 9px 16px;
+  font-size: 14px; font-weight: 600; text-decoration: none; display: inline-block;
+}
+.btn-birincil { background: #1e3a5f; color: #fff; }
+.btn-birincil:hover { background: #16304f; }
+.btn-birincil.giris { background: #16a34a; }
+.btn-birincil.giris:hover { background: #15803d; }
+.btn-birincil.cikis { background: #dc2626; }
+.btn-birincil.cikis:hover { background: #b91c1c; }
+.btn-ikincil { background: #e5e7eb; color: #374151; }
+.btn-ikincil:hover { background: #d1d5db; }
+.btn-sil { background: #fee2e2; color: #991b1b; padding: 5px 12px; font-size: 13px; }
+.btn-sil:hover { background: #fecaca; }
+
+/* ---------- Tablolar ---------- */
+.tablo { width: 100%; border-collapse: collapse; font-size: 14px; }
+.tablo th, .tablo td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #eef2f7; }
+.tablo th { background: #f8fafc; color: #475569; font-weight: 600; font-size: 13px; }
+.tablo tr:hover { background: #f9fafb; }
+.uyari-satir { background: #fef9c3 !important; }
+.giris-renk { color: #16a34a; font-weight: 600; }
+.cikis-renk { color: #dc2626; font-weight: 600; }
+.bos { color: #9ca3af; padding: 8px 0; }
+
+/* ---------- Rozetler ---------- */
+.rozet { display: inline-block; padding: 3px 9px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+.rozet.ok { background: #dcfce7; color: #166534; }
+.rozet.dusuk { background: #fee2e2; color: #991b1b; }
+.rozet.admin-rozet { background: #dbeafe; color: #1e40af; }
+.rozet.giris-rozet { background: #dcfce7; color: #166534; }
+.rozet.cikis-rozet { background: #fee2e2; color: #991b1b; }
+
+/* ---------- Giriş ekranı ---------- */
+.giris-body {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100vh; background: linear-gradient(135deg, #1e3a5f, #0f2438);
+}
+.giris-kutu {
+  background: #fff; padding: 36px 32px; border-radius: 14px;
+  width: 100%; max-width: 360px; box-shadow: 0 20px 40px rgba(0,0,0,.2);
+}
+.giris-logo { font-size: 22px; font-weight: 700; color: #1e3a5f; text-align: center; }
+.giris-kutu h1 { font-size: 18px; text-align: center; margin: 8px 0 20px; color: #334155; }
+.giris-kutu button { width: 100%; margin-top: 8px; }
+.giris-kutu .ipucu { font-size: 12px; color: #9ca3af; text-align: center; margin-top: 16px; }
+
+/* ---------- Alt bar ---------- */
+.alt-bar { text-align: center; padding: 18px; color: #9ca3af; font-size: 13px; }
+
+/* ============================================================
+   FABRİKA DEPOSU BİLEŞENLERİ
+   ============================================================ */
+
+/* Kod etiketi (bölüm kodu, birim kodu) ve raf adresi */
+.kod-etiket {
+  display: inline-block; background: #1e3a5f; color: #fff;
+  padding: 2px 8px; border-radius: 5px; font-size: 12px;
+  font-weight: 700; font-family: ui-monospace, "SF Mono", Menlo, monospace;
+}
+.adres {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12px; color: #475569; background: #eef2f7;
+  padding: 2px 7px; border-radius: 5px;
+}
+code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12px; color: #0f766e;
+}
+.nowrap { white-space: nowrap; }
+
+/* Dashboard bölüm kartları */
+.bolum-kartlar {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px;
+}
+.bolum-kart {
+  display: flex; flex-direction: column; gap: 2px;
+  background: #f8fafc; border: 1px solid #e5e7eb; border-left: 4px solid #94a3b8;
+  border-radius: 8px; padding: 12px 14px; text-decoration: none; color: #1f2937;
+}
+.bolum-kart:hover { background: #fff; box-shadow: 0 3px 10px rgba(0,0,0,.07); }
+.bolum-kart .bolum-kod {
+  font-family: ui-monospace, Menlo, monospace; font-size: 11px;
+  font-weight: 700; color: #64748b; letter-spacing: .5px;
+}
+.bolum-kart .bolum-ad { font-weight: 600; font-size: 14px; }
+.bolum-kart .bolum-cesit { font-size: 12px; color: #6b7280; }
+
+/* Bölüm türüne göre renk kodu — depoda hangi malzeme nerede, bir bakışta */
+.bolum-kart.tur-hammadde    { border-left-color: #2563eb; }
+.bolum-kart.tur-yari_mamul  { border-left-color: #7c3aed; }
+.bolum-kart.tur-mamul       { border-left-color: #16a34a; }
+.bolum-kart.tur-sarf        { border-left-color: #0891b2; }
+.bolum-kart.tur-yedek_parca { border-left-color: #ca8a04; }
+.bolum-kart.tur-kimyasal    { border-left-color: #dc2626; }
+.bolum-kart.tur-ambalaj     { border-left-color: #d97706; }
+.bolum-kart.tur-kkd         { border-left-color: #059669; }
+.bolum-kart.tur-karantina   { border-left-color: #db2777; }
+.bolum-kart.tur-hurda       { border-left-color: #78716c; }
+
+/* Bölüm listesi (bolumler.html) */
+.bolum-blok { border-top: 1px solid #eef2f7; padding: 14px 0; }
+.bolum-blok:first-of-type { border-top: none; }
+.bolum-baslik {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 12px; flex-wrap: wrap;
+}
+.bolum-baslik > div { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
+.bolum-detay { font-size: 13px; color: #6b7280; margin: 6px 0 8px; }
+.rozet.tur-rozet { background: #e0e7ff; color: #3730a3; }
+
+.raf-listesi { display: flex; gap: 7px; flex-wrap: wrap; }
+.raf-cip {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: #eef2f7; border: 1px solid #dbe3ec; border-radius: 6px;
+  padding: 3px 5px 3px 9px; font-size: 12px;
+  font-family: ui-monospace, Menlo, monospace; color: #334155;
+}
+.raf-cip form { display: inline; }
+.raf-cip button {
+  background: none; color: #94a3b8; padding: 0 3px;
+  font-size: 15px; line-height: 1; font-weight: 700;
+}
+.raf-cip button:hover { color: #dc2626; }
+
+/* Formlarda tam genişlik alan ve ipucu satırı */
+.form-grid .tam-genislik { grid-column: 1 / -1; }
+.ipucu-satir { display: block; font-size: 12px; color: #6b7280; margin-top: 4px; min-height: 16px; }
+.ipucu-satir.olumlu { color: #15803d; font-weight: 600; }
+.ipucu-satir.olumsuz { color: #b91c1c; font-weight: 600; }
+.kayit-notu { font-size: 12px; color: #94a3b8; margin-top: 12px; }
+
+/* Mal giriş sayfasındaki bölüm/raf özeti */
+.bilgi-panel { background: #f8fafc; }
+.raf-ozet {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 6px; font-size: 13px;
+}
+.raf-sayi { color: #94a3b8; font-size: 12px; }
+
+/* İki sütunlu rapor bloğu */
+.iki-sutun { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+@media (max-width: 760px) {
+  .iki-sutun, .form-grid { grid-template-columns: 1fr; }
+}
+
+/* Geniş tablolar dar ekranda yatay kayabilsin */
+.panel { overflow-x: auto; }
+
+/* Excel'e aktar butonu — Excel'in kurumsal yeşiliyle */
+.btn-excel {
+  background: #1d6f42; color: #fff; border-radius: 8px;
+  padding: 9px 16px; font-size: 14px; font-weight: 600;
+  text-decoration: none; display: inline-block; white-space: nowrap;
+}
+.btn-excel:hover { background: #155a35; }

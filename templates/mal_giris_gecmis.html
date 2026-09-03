@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block baslik %}Giriş Geçmişi{% endblock %}
+
+{% block icerik %}
+<h1>Mal Giriş Geçmişi</h1>
+<p class="aciklama">
+  Depoya yapılan tüm girişler. Her satırda <strong>kim koydu</strong>,
+  <strong>nereye koydu</strong> ve <strong>ne zaman koydu</strong> bilgisi yer alır.
+</p>
+
+<div class="panel">
+  <form method="get" class="filtre-form">
+    <label>Malzeme
+      <select name="urun_id">
+        <option value="">Hepsi</option>
+        {% for u in urunler %}
+        <option value="{{ u.id }}" {% if secili_urun == u.id %}selected{% endif %}>
+          {{ u.stok_kodu }} — {{ u.ad }}
+        </option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Bölüm
+      <select name="bolum_id">
+        <option value="">Hepsi</option>
+        {% for b in bolumler %}
+        <option value="{{ b.id }}" {% if secili_bolum == b.id %}selected{% endif %}>
+          {{ b.kod }} — {{ b.ad }}
+        </option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Başlangıç
+      <input type="date" name="baslangic" value="{{ baslangic or '' }}">
+    </label>
+    <label>Bitiş
+      <input type="date" name="bitis" value="{{ bitis or '' }}">
+    </label>
+    <button type="submit" class="btn-birincil">Filtrele</button>
+    <a href="{{ url_for('mal_giris_gecmis') }}" class="btn-ikincil">Temizle</a>
+    <a href="{{ url_for('mal_giris_excel', **request.args) }}" class="btn-excel">
+      ⬇ Excel'e Aktar
+    </a>
+  </form>
+
+  <table class="tablo">
+    <tr>
+      <th>Ne zaman</th><th>Malzeme</th><th>Miktar</th>
+      <th>Nereye (bölüm / raf)</th><th>Kim koydu</th>
+      <th>Tedarikçi</th><th>İrsaliye</th><th>Açıklama</th>
+    </tr>
+    {% for k in kayitlar %}
+    <tr>
+      <td class="nowrap">{{ k.tarih[:16] }}</td>
+      <td><code>{{ k.stok_kodu }}</code><br>{{ k.urun_ad }}</td>
+      <td class="giris-renk">+{{ '%g'|format(k.miktar) }} {{ k.birim }}</td>
+      <td>{{ k.bolum_ad }}<br><span class="adres">{{ k.raf_kod }}</span></td>
+      <td>{{ k.calisan_ad }}</td>
+      <td>{{ k.tedarikci or '—' }}</td>
+      <td>{{ k.irsaliye_no or '—' }}</td>
+      <td>{{ k.aciklama or '—' }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="8" class="bos">Bu filtreye uyan giriş kaydı yok.</td></tr>
+    {% endfor %}
+  </table>
+  <p class="kayit-notu">{{ kayitlar|length }} kayıt listeleniyor (en fazla 300).</p>
+</div>
+{% endblock %}

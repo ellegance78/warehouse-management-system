@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block baslik %}Rapor{% endblock %}
+
+{% block icerik %}
+<h1>Hareket Raporu</h1>
+<p class="aciklama">
+  Giriş ve çıkışların tarih sıralı birleşik dökümü. Alt tablolarda çıkışların
+  <strong>hangi birim için</strong> ve <strong>hangi gerekçeyle</strong> yapıldığı
+  kırılımı yer alır.
+</p>
+
+<div class="panel">
+  <form method="get" class="filtre-form">
+    <label>Başlangıç
+      <input type="date" name="baslangic" value="{{ baslangic or '' }}">
+    </label>
+    <label>Bitiş
+      <input type="date" name="bitis" value="{{ bitis or '' }}">
+    </label>
+    <label>Hareket tipi
+      <select name="tip">
+        <option value="">Giriş + Çıkış</option>
+        <option value="giris" {% if tip == 'giris' %}selected{% endif %}>Sadece giriş</option>
+        <option value="cikis" {% if tip == 'cikis' %}selected{% endif %}>Sadece çıkış</option>
+      </select>
+    </label>
+    <button type="submit" class="btn-birincil">Raporla</button>
+    <a href="{{ url_for('rapor') }}" class="btn-ikincil">Temizle</a>
+    <a href="{{ url_for('rapor_excel', **request.args) }}" class="btn-excel">
+      ⬇ Excel'e Aktar
+    </a>
+  </form>
+</div>
+
+<div class="iki-sutun">
+  <div class="panel">
+    <h2>Birim bazında çıkış <small>hangi birim ne kadar çekmiş</small></h2>
+    <table class="tablo">
+      <tr><th>Birim</th><th>Hareket</th><th>Çeşit</th></tr>
+      {% for b in birim_tuketim %}
+      <tr>
+        <td><span class="kod-etiket">{{ b.kod }}</span> {{ b.ad }}</td>
+        <td>{{ b.hareket_sayisi }}</td>
+        <td>{{ b.cesit }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="3" class="bos">Bu aralıkta çıkış yok.</td></tr>
+      {% endfor %}
+    </table>
+  </div>
+
+  <div class="panel">
+    <h2>Çıkış nedeni dağılımı</h2>
+    <table class="tablo">
+      <tr><th>Neden</th><th>Hareket</th></tr>
+      {% for n in neden_dagilim %}
+      <tr><td>{{ n.neden }}</td><td>{{ n.hareket_sayisi }}</td></tr>
+      {% else %}
+      <tr><td colspan="2" class="bos">Bu aralıkta çıkış yok.</td></tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>⚠️ Kritik stok</h2>
+  {% if dusuk %}
+  <table class="tablo">
+    <tr><th>Stok kodu</th><th>Malzeme</th><th>Kalan</th><th>Kritik eşik</th></tr>
+    {% for u in dusuk %}
+    <tr class="uyari-satir">
+      <td><code>{{ u.stok_kodu }}</code></td>
+      <td>{{ u.urun_ad }}</td>
+      <td>{{ '%g'|format(u.stok) }} {{ u.birim }}</td>
+      <td>{{ '%g'|format(u.esik) }} {{ u.birim }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <p class="bos">Kritik seviyede malzeme yok.</p>
+  {% endif %}
+</div>
+
+<div class="panel">
+  <h2>Tüm hareketler</h2>
+  <table class="tablo">
+    <tr>
+      <th>Tarih</th><th>Tip</th><th>Malzeme</th><th>Miktar</th>
+      <th>Bölüm / Raf</th><th>Birim</th><th>Kaynak / Neden</th>
+      <th>Kaydeden</th><th>Detay</th>
+    </tr>
+    {% for h in hareketler %}
+    <tr>
+      <td class="nowrap">{{ h.tarih[:16] }}</td>
+      <td><span class="rozet {{ 'giris-rozet' if h.tip == 'GİRİŞ' else 'cikis-rozet' }}">{{ h.tip }}</span></td>
+      <td>{{ h.urun_ad }}</td>
+      <td class="{{ 'giris-renk' if h.tip == 'GİRİŞ' else 'cikis-renk' }}">
+        {{ '+' if h.tip == 'GİRİŞ' else '−' }}{{ '%g'|format(h.miktar) }} {{ h.birim }}
+      </td>
+      <td>{{ h.bolum_ad }}<br><span class="adres">{{ h.raf_kod }}</span></td>
+      <td>{{ h.birim_ad or '—' }}</td>
+      <td>{{ h.kaynak_hedef or '—' }}</td>
+      <td>{{ h.calisan_ad }}</td>
+      <td>{{ h.detay or '—' }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="9" class="bos">Bu aralıkta hareket yok.</td></tr>
+    {% endfor %}
+  </table>
+  <p class="kayit-notu">{{ hareketler|length }} hareket listeleniyor (en fazla 500).</p>
+</div>
+{% endblock %}

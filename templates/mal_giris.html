@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block baslik %}Mal Giriş{% endblock %}
+
+{% block icerik %}
+<h1>Mal Giriş</h1>
+<p class="aciklama">
+  Depoya giren malzemenin kaydı. <strong>Kim koydu</strong> (oturumdaki çalışan),
+  <strong>nereye koydu</strong> (bölüm → raf) ve <strong>ne zaman</strong> (kayıt anı)
+  bilgileri otomatik olarak saklanır.
+</p>
+
+<div class="panel">
+  <form method="post" class="form-grid">
+    <label>Malzeme *
+      <select name="urun_id" id="urun" required>
+        <option value="">— malzeme seçin —</option>
+        {% for u in urunler %}
+        <option value="{{ u.id }}" data-birim="{{ u.birim }}">
+          {{ u.stok_kodu }} — {{ u.ad }} ({{ u.birim }})
+        </option>
+        {% endfor %}
+      </select>
+    </label>
+
+    <label>Miktar *
+      <input type="number" name="miktar" id="miktar" step="any" min="0.01" required>
+      <span class="ipucu-satir" id="birim-ipucu"></span>
+    </label>
+
+    <label>Nereye — Depo bölümü *
+      <select id="bolum" required>
+        <option value="">— bölüm seçin —</option>
+        {% for b in bolumler %}
+        <option value="{{ b.id }}">{{ b.kod }} — {{ b.ad }}</option>
+        {% endfor %}
+      </select>
+    </label>
+
+    <label>Nereye — Raf / göz *
+      <select name="raf_id" id="raf" required disabled>
+        <option value="">— önce bölüm seçin —</option>
+      </select>
+    </label>
+
+    <label>Tedarikçi / geldiği yer
+      <input type="text" name="tedarikci" placeholder="Örn. Demir Çelik A.Ş.">
+    </label>
+
+    <label>İrsaliye / sipariş no
+      <input type="text" name="irsaliye_no" placeholder="IRS-2026-0143">
+    </label>
+
+    <label class="tam-genislik">Açıklama
+      <input type="text" name="aciklama" placeholder="Kalite kontrolden geçti, parti no 88/A">
+    </label>
+
+    <div class="form-buton">
+      <button type="submit" class="btn-birincil giris">Girişi Kaydet</button>
+      <a href="{{ url_for('mal_giris_gecmis') }}" class="btn-ikincil">Giriş Geçmişi</a>
+    </div>
+  </form>
+
+  <p class="kayit-notu">
+    Kaydeden: <strong>{{ session.ad_soyad }}</strong> · Tarih: kayıt anında otomatik yazılır.
+  </p>
+</div>
+
+<div class="panel bilgi-panel">
+  <h2>Bölümler ve raflar</h2>
+  <div class="raf-ozet">
+    {% for b in bolumler %}
+    <div>
+      <span class="kod-etiket">{{ b.kod }}</span> {{ b.ad }}
+      <span class="raf-sayi">{{ b.raf_sayisi }} raf</span>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+// Bölüm seçilince o bölümün rafları yüklenir (kademeli seçim).
+// Raflar sayfa ile birlikte gömülü geldiği için ek istek gerekmez.
+const TUM_RAFLAR = [
+  {% for r in raflar %}{id: {{ r.id }}, bolum: {{ r.bolum_id }}, kod: {{ r.kod|tojson }}}{{ "," if not loop.last }}{% endfor %}
+];
+
+const bolumSecim = document.getElementById("bolum");
+const rafSecim = document.getElementById("raf");
+const urunSecim = document.getElementById("urun");
+const birimIpucu = document.getElementById("birim-ipucu");
+
+bolumSecim.addEventListener("change", () => {
+  const bolumId = parseInt(bolumSecim.value, 10);
+  const raflar = TUM_RAFLAR.filter(r => r.bolum === bolumId);
+  rafSecim.innerHTML = "";
+  if (!raflar.length) {
+    rafSecim.innerHTML = '<option value="">— bu bölümde raf yok —</option>';
+    rafSecim.disabled = true;
+    return;
+  }
+  rafSecim.disabled = false;
+  rafSecim.insertAdjacentHTML("beforeend", '<option value="">— raf seçin —</option>');
+  raflar.forEach(r => {
+    const o = document.createElement("option");
+    o.value = r.id;
+    o.textContent = r.kod;
+    rafSecim.appendChild(o);
+  });
+});
+
+// Miktar alanının yanında seçilen malzemenin ölçü birimini göster
+urunSecim.addEventListener("change", () => {
+  const secili = urunSecim.selectedOptions[0];
+  birimIpucu.textContent = secili && secili.dataset.birim
+    ? "Birim: " + secili.dataset.birim : "";
+});
+</script>
+{% endblock %}

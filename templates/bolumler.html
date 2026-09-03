@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block baslik %}Depo Bölümleri{% endblock %}
+
+{% block icerik %}
+<h1>Depo Bölümleri ve Raflar</h1>
+<p class="aciklama">
+  Fabrika deposu, malzemenin cinsine ve saklama koşuluna göre bölümlere ayrılır.
+  Her bölümün altında raf/göz adresleri bulunur — stok bu raf seviyesinde tutulur,
+  böylece "hangi malzeme tam olarak nerede" sorusu cevaplanabilir.
+</p>
+
+<div class="panel">
+  <h2>Yeni bölüm ekle</h2>
+  <form method="post" class="form-grid">
+    <label>Bölüm kodu *
+      <input type="text" name="kod" required maxlength="10" placeholder="HM">
+    </label>
+    <label>Bölüm adı *
+      <input type="text" name="ad" required placeholder="Hammadde Deposu">
+    </label>
+    <label>Tür
+      <select name="tur">
+        {% for anahtar, etiket in BOLUM_TURLERI.items() %}
+        <option value="{{ anahtar }}">{{ etiket }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Fabrika içi konum
+      <input type="text" name="konum" placeholder="A Blok, zemin kat">
+    </label>
+    <label>Özel saklama koşulu
+      <input type="text" name="ozel_kosul" placeholder="Havalandırmalı, yanmaz dolap">
+    </label>
+    <label>Açıklama
+      <input type="text" name="aciklama">
+    </label>
+    <div class="form-buton">
+      <button type="submit" class="btn-birincil">Bölüm Ekle</button>
+    </div>
+  </form>
+</div>
+
+<div class="panel">
+  <h2>Yeni raf / göz ekle</h2>
+  <form method="post" action="{{ url_for('raf_ekle') }}" class="satir-form">
+    <label>Bölüm
+      <select name="bolum_id" required>
+        <option value="">— bölüm seçin —</option>
+        {% for b in bolumler %}
+        <option value="{{ b.id }}">{{ b.kod }} — {{ b.ad }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Raf kodu
+      <input type="text" name="kod" required placeholder="HM-A-01">
+    </label>
+    <label>Açıklama
+      <input type="text" name="aciklama" placeholder="Sol blok, alt göz">
+    </label>
+    <button type="submit" class="btn-birincil">Raf Ekle</button>
+  </form>
+</div>
+
+<div class="panel">
+  <h2>Tanımlı bölümler <small>{{ bolumler|length }} bölüm</small></h2>
+  {% for b in bolumler %}
+  <div class="bolum-blok">
+    <div class="bolum-baslik">
+      <div>
+        <span class="kod-etiket">{{ b.kod }}</span>
+        <strong>{{ b.ad }}</strong>
+        <span class="rozet tur-rozet">{{ BOLUM_TURLERI.get(b.tur, b.tur) }}</span>
+      </div>
+      <form method="post" action="{{ url_for('bolum_sil', bolum_id=b.id) }}"
+            onsubmit="return confirm('{{ b.ad }} bölümü silinsin mi?')">
+        <button type="submit" class="btn-sil">Sil</button>
+      </form>
+    </div>
+    <div class="bolum-detay">
+      {% if b.konum %}📍 {{ b.konum }}{% endif %}
+      {% if b.ozel_kosul %} · ⚠️ {{ b.ozel_kosul }}{% endif %}
+      {% if b.aciklama %} · {{ b.aciklama }}{% endif %}
+    </div>
+    <div class="raf-listesi">
+      {% for r in raflar if r.bolum_id == b.id %}
+        <span class="raf-cip">
+          {{ r.kod }}
+          <form method="post" action="{{ url_for('raf_sil', raf_id=r.id) }}"
+                onsubmit="return confirm('{{ r.kod }} rafı silinsin mi?')">
+            <button type="submit" title="Rafı sil">×</button>
+          </form>
+        </span>
+      {% else %}
+        <span class="bos">Bu bölümde henüz raf tanımlı değil.</span>
+      {% endfor %}
+    </div>
+  </div>
+  {% else %}
+  <p class="bos">Henüz bölüm eklenmemiş.</p>
+  {% endfor %}
+</div>
+{% endblock %}

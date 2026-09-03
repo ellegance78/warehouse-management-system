@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block baslik %}Çalışanlar — Depo Yönetim{% endblock %}
+
+{% block icerik %}
+<h1>Çalışanlar (Kullanıcı Yönetimi)</h1>
+<p class="aciklama">Bu sayfa yalnızca yöneticiler (admin) içindir. Yeni çalışan ekleyip
+  rol atayabilirsiniz. Şifreler güvenli şekilde hash'lenerek saklanır.</p>
+
+<section class="panel">
+  <h2>Yeni Çalışan Ekle</h2>
+  <form method="post" class="satir-form">
+    <input type="text" name="ad_soyad" placeholder="Ad Soyad" required>
+    <input type="text" name="kullanici_adi" placeholder="Kullanıcı adı" required>
+    <input type="password" name="sifre" placeholder="Şifre" required>
+    <select name="rol">
+      <option value="personel">personel</option>
+      <option value="admin">admin</option>
+    </select>
+    <button type="submit" class="btn-birincil">Ekle</button>
+  </form>
+</section>
+
+<section class="panel">
+  <h2>Mevcut Çalışanlar ({{ calisanlar|length }})</h2>
+  <table class="tablo">
+    <thead><tr><th>#</th><th>Ad Soyad</th><th>Kullanıcı Adı</th><th>Rol</th><th>Kayıt</th></tr></thead>
+    <tbody>
+      {% for c in calisanlar %}
+      <tr>
+        <td>{{ c.id }}</td>
+        <td>{{ c.ad_soyad }}</td>
+        <td>{{ c.kullanici_adi }}</td>
+        <td><span class="rozet {{ 'admin-rozet' if c.rol=='admin' else '' }}">{{ c.rol }}</span></td>
+        <td>{{ c.olusturma }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

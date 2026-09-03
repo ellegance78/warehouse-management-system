@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block baslik %}Fabrika Birimleri{% endblock %}
+
+{% block icerik %}
+<h1>Fabrika Birimleri</h1>
+<p class="aciklama">
+  Depodan çıkan her malzeme bir birim için çıkar. Birimler serbest metin olarak
+  değil burada tanımlı liste olarak tutulur; böylece raporda "bu ay hangi birim
+  ne kadar malzeme çekmiş" sorusu net biçimde cevaplanabilir.
+</p>
+
+<div class="panel">
+  <h2>Yeni birim ekle</h2>
+  <form method="post" class="satir-form">
+    <label>Birim kodu
+      <input type="text" name="kod" required maxlength="10" placeholder="URT-1">
+    </label>
+    <label>Birim adı
+      <input type="text" name="ad" required placeholder="Üretim Hattı 1">
+    </label>
+    <label>Sorumlu
+      <input type="text" name="sorumlu" placeholder="Vardiya amiri">
+    </label>
+    <label>Açıklama
+      <input type="text" name="aciklama">
+    </label>
+    <button type="submit" class="btn-birincil">Ekle</button>
+  </form>
+</div>
+
+<div class="panel">
+  <h2>Tanımlı birimler <small>{{ birimler|length }} birim</small></h2>
+  <table class="tablo">
+    <tr>
+      <th>Kod</th><th>Birim adı</th><th>Sorumlu</th><th>Açıklama</th>
+      <th>Çıkış geçmişi</th>
+      {% if session.rol == 'admin' %}<th></th>{% endif %}
+    </tr>
+    {% for b in birimler %}
+    <tr>
+      <td><span class="kod-etiket">{{ b.kod }}</span></td>
+      <td>{{ b.ad }}</td>
+      <td>{{ b.sorumlu or '—' }}</td>
+      <td>{{ b.aciklama or '—' }}</td>
+      <td><a href="{{ url_for('mal_cikis_gecmis', birim_id=b.id) }}">Çıkışlarını gör →</a></td>
+      {% if session.rol == 'admin' %}
+      <td>
+        <form method="post" action="{{ url_for('birim_sil', birim_id=b.id) }}"
+              onsubmit="return confirm('{{ b.ad }} birimi silinsin mi?')">
+          <button type="submit" class="btn-sil">Sil</button>
+        </form>
+      </td>
+      {% endif %}
+    </tr>
+    {% else %}
+    <tr><td colspan="6" class="bos">Henüz birim eklenmemiş.</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

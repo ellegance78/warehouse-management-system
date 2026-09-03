@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block baslik %}Çıkış Geçmişi{% endblock %}
+
+{% block icerik %}
+<h1>Mal Çıkış Geçmişi</h1>
+<p class="aciklama">
+  Depodan yapılan tüm çıkışlar. Her satırda <strong>kim çıkardı</strong>,
+  <strong>neden çıkardı</strong>, <strong>hangi birim için</strong>,
+  <strong>nereden çıkardı</strong> ve <strong>ne zaman</strong> bilgisi yer alır.
+</p>
+
+<div class="panel">
+  <form method="get" class="filtre-form">
+    <label>Malzeme
+      <select name="urun_id">
+        <option value="">Hepsi</option>
+        {% for u in urunler %}
+        <option value="{{ u.id }}" {% if secili_urun == u.id %}selected{% endif %}>
+          {{ u.stok_kodu }} — {{ u.ad }}
+        </option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Bölüm
+      <select name="bolum_id">
+        <option value="">Hepsi</option>
+        {% for b in bolumler %}
+        <option value="{{ b.id }}" {% if secili_bolum == b.id %}selected{% endif %}>
+          {{ b.kod }} — {{ b.ad }}
+        </option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Hangi birim
+      <select name="birim_id">
+        <option value="">Hepsi</option>
+        {% for b in birimler %}
+        <option value="{{ b.id }}" {% if secili_birim == b.id %}selected{% endif %}>
+          {{ b.kod }} — {{ b.ad }}
+        </option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Başlangıç
+      <input type="date" name="baslangic" value="{{ baslangic or '' }}">
+    </label>
+    <label>Bitiş
+      <input type="date" name="bitis" value="{{ bitis or '' }}">
+    </label>
+    <button type="submit" class="btn-birincil">Filtrele</button>
+    <a href="{{ url_for('mal_cikis_gecmis') }}" class="btn-ikincil">Temizle</a>
+    <a href="{{ url_for('mal_cikis_excel', **request.args) }}" class="btn-excel">
+      ⬇ Excel'e Aktar
+    </a>
+  </form>
+
+  <table class="tablo">
+    <tr>
+      <th>Ne zaman</th><th>Malzeme</th><th>Miktar</th>
+      <th>Nereden (bölüm / raf)</th><th>Hangi birim için</th>
+      <th>Neden</th><th>Kim çıkardı</th><th>Teslim alan</th>
+    </tr>
+    {% for k in kayitlar %}
+    <tr>
+      <td class="nowrap">{{ k.tarih[:16] }}</td>
+      <td><code>{{ k.stok_kodu }}</code><br>{{ k.urun_ad }}</td>
+      <td class="cikis-renk">−{{ '%g'|format(k.miktar) }} {{ k.birim }}</td>
+      <td>{{ k.bolum_ad }}<br><span class="adres">{{ k.raf_kod }}</span></td>
+      <td><span class="kod-etiket">{{ k.birim_kod }}</span> {{ k.birim_ad }}</td>
+      <td>{{ k.neden }}</td>
+      <td>{{ k.calisan_ad }}</td>
+      <td>{{ k.teslim_alan or '—' }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="8" class="bos">Bu filtreye uyan çıkış kaydı yok.</td></tr>
+    {% endfor %}
+  </table>
+  <p class="kayit-notu">{{ kayitlar|length }} kayıt listeleniyor (en fazla 300).</p>
+</div>
+{% endblock %}

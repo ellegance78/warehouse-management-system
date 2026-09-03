@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block baslik %}Stok Durumu{% endblock %}
+
+{% block icerik %}
+<h1>Stok Durumu</h1>
+<p class="aciklama">
+  Stok ayrı bir tabloda tutulmaz; <strong>giriş toplamı − çıkış toplamı</strong> olarak
+  hareket kayıtlarından hesaplanır. Böylece stok her zaman kayıtlarla tutarlıdır
+  ve her rakamın arkasında izlenebilir bir hareket vardır.
+</p>
+
+<div class="panel">
+  <h2>Malzeme bazında toplam <small>tüm bölümlerin toplamı</small></h2>
+  <table class="tablo">
+    <tr><th>Stok kodu</th><th>Malzeme</th><th>Kategori</th><th>Toplam stok</th><th>Kritik eşik</th><th>Durum</th></tr>
+    {% for u in urun_bazli %}
+    <tr class="{{ 'uyari-satir' if u.stok < u.esik }}">
+      <td><code>{{ u.stok_kodu }}</code></td>
+      <td>{{ u.urun_ad }}</td>
+      <td>{{ u.kategori or '—' }}</td>
+      <td><strong>{{ '%g'|format(u.stok) }}</strong> {{ u.birim }}</td>
+      <td>{{ '%g'|format(u.esik) }}</td>
+      <td>
+        {% if u.stok < u.esik %}
+          <span class="rozet dusuk">Kritik</span>
+        {% else %}
+          <span class="rozet ok">Yeterli</span>
+        {% endif %}
+      </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="6" class="bos">Henüz malzeme tanımlanmamış.</td></tr>
+    {% endfor %}
+  </table>
+</div>
+
+<div class="panel">
+  <h2>Raf bazında dağılım <small>hangi malzeme tam olarak nerede</small></h2>
+  <form method="get" class="filtre-form">
+    <label>Bölüm
+      <select name="bolum_id">
+        <option value="">Tüm bölümler</option>
+        {% for b in bolumler %}
+        <option value="{{ b.id }}" {% if secili_bolum == b.id %}selected{% endif %}>
+          {{ b.kod }} — {{ b.ad }}
+        </option>
+        {% endfor %}
+      </select>
+    </label>
+    <button type="submit" class="btn-birincil">Filtrele</button>
+    <a href="{{ url_for('stok') }}" class="btn-ikincil">Temizle</a>
+    <a href="{{ url_for('stok_excel', **request.args) }}" class="btn-excel">
+      ⬇ Excel'e Aktar
+    </a>
+  </form>
+
+  <table class="tablo">
+    <tr><th>Bölüm</th><th>Raf</th><th>Stok kodu</th><th>Malzeme</th><th>Miktar</th></tr>
+    {% for s in detayli %}
+    <tr>
+      <td><span class="kod-etiket">{{ s.bolum_kod }}</span> {{ s.bolum_ad }}</td>
+      <td><span class="adres">{{ s.raf_kod }}</span></td>
+      <td><code>{{ s.stok_kodu }}</code></td>
+      <td>{{ s.urun_ad }}</td>
+      <td><strong>{{ '%g'|format(s.stok) }}</strong> {{ s.birim }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="5" class="bos">Bu filtrede stoklu raf yok.</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}
